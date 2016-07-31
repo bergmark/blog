@@ -19,7 +19,7 @@ hackage.
 
 Add the missing files as `extra-source-files`.
 
-Using `extra-source-files` the files will be added to the tarball that's created when you run `cabal sdist`, `stack sdist`, or `stack upload`. You can then access these files from the project root as you probably already are.
+Using `extra-source-files` the files will be added to the tarball that's created when you run `cabal sdist`, `stack sdist`, or `stack upload`. You can then use file paths relative to the project's root as you probably already are.
 ```
 extra-source-files:
   tests/*.txt

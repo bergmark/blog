@@ -15,6 +15,27 @@ This happens for others because they don't have a source checkout,
 instead they are running tests from the tarball that was uploaded to
 hackage.
 
+### Reproducing
+
+Using cabal-install:
+```
+$ cabal sdist
+$ tar xf ./dist/aeson-1.0.0.0.tar.gz
+$ cd aeson-1.0.0.0/
+$ cabal sandbox init
+$ cabal install --enable-tests
+$ cabal test
+```
+
+Using stack:
+```
+$ stack sdist
+$ tar xf .stack-work/**/aeson-1.0.0.0.tar.gz
+$ cd aeson-1.0.0.0/
+$ stack init
+$ stack test
+```
+
 ### Solution
 
 Add the missing files as `extra-source-files`.
@@ -34,22 +55,44 @@ extra-source-files:
 
 * To test if the tarball contains everything it needs you need to install everything in a directory separate from your source checkout.
 
-Using cabal-install:
+
+## Ambiguous modules when using doctest
+
 ```
-$ cabal sdist
-$ tar xf ./dist/aeson-1.0.0.0.tar.gz
-$ cd aeson-1.0.0.0/
-$ cabal sandbox init
-$ cabal install --enable-tests
-$ cabal test
+src/Language/Nix/PrettyPrinting.hs:23:1: error:
+    Ambiguous interface for ‘Text.PrettyPrint.HughesPJClass’:
+      it was found in multiple packages:
+      pretty-1.1.3.3 pretty-class-1.0.1.1
 ```
 
-Using stack (assuming your `stack.yaml` is also in declared an extra-source-file!):
+Doctest does not read dependencies from a .cabal file, it simply looks
+for the requested modules in the current package database.
+
+When developing your package in isolation you are unlikely to be
+affected by this. In the example above the package depends on
+`pretty`, but when `pretty-class` is installed as well this problem
+occurs.
+
+### Reproducing
+
+Install all the mentioned packages together in one sandbox/package
+database and run the tests after that.
+
 ```
-$ stack sdist
-$ tar xf .stack-work/**/aeson-1.0.0.0.tar.gz
-$ cd aeson-1.0.0.0/
-$ stack test
+$ cabal install pretty pretty-class my-package --enable-tests
+$ cabal test my-package
 ```
 
+### Solution
 
+There is no good solution to this situation. You can accept that the
+problem can occur since it's unlikely that this would hide any
+bugs. The other solution is to use `-XPackageImports` to qualify which
+package to get the module from.
+
+```haskell
+{-# LANGUAGE PackageImports #-}
+module Language.Nix.PrettyPrinting where
+
+import "pretty" Text.PrettyPrint.HughesPJClass
+```

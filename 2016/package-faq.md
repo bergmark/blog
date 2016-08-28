@@ -96,3 +96,16 @@ module Language.Nix.PrettyPrinting where
 
 import "pretty" Text.PrettyPrint.HughesPJClass
 ```
+
+For packages in stackage that also have non-doctest tests you can use a cabal flag to disable just doctests. You can send a pull request to stackage toggling this flag by editing the `package-flags` section of `build-constraints.yaml`.
+
+```
+flag run-doctests
+  description:       Run doctests
+  manual:            True
+  default:           False
+  
+test-suite my-doctests
+  if !flag(run-doctests)
+    buildable: False
+```

@@ -58,6 +58,8 @@ extra-source-files:
 
 ## Ambiguous modules when using doctest
 
+Upstream issue for doctest: https://github.com/sol/doctest/issues/119
+
 ```
 src/Language/Nix/PrettyPrinting.hs:23:1: error:
     Ambiguous interface for ‘Text.PrettyPrint.HughesPJClass’:

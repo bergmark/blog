@@ -67,8 +67,12 @@ src/Language/Nix/PrettyPrinting.hs:23:1: error:
       pretty-1.1.3.3 pretty-class-1.0.1.1
 ```
 
-Doctest does not read dependencies from a .cabal file, it simply looks
-for the requested modules in the current package database.
+This doesn't mean that your package is broken. The reason it happens
+is that doctest looks for packages in the local package database
+instead of looking at declared build-depends. If you import a module
+that also happens to be defined in another installed package doctest
+doesn't know which package to get the module from and this error
+occurs.
 
 When developing your package in isolation you are unlikely to be
 affected by this. In the example above the package depends on
@@ -87,7 +91,7 @@ $ cabal test my-package
 
 ### Solution
 
-There is no good solution to this situation. You can accept that the
+Currently there is no good solution to this situation. You can accept that the
 problem can occur since it's unlikely that this would hide any
 bugs. The other solution is to use `-XPackageImports` to qualify which
 package to get the module from.
@@ -106,7 +110,7 @@ flag run-doctests
   description:       Run doctests
   manual:            True
   default:           False
-  
+
 test-suite my-doctests
   if !flag(run-doctests)
     buildable: False

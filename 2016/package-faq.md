@@ -91,6 +91,8 @@ $ cabal test my-package
 
 ### Solution
 
+**Update:** For stackage there is now an option called `hide` in build-constraints.yaml that is used to hide packages that have overlapping module names (on a first-come first-serve basis). This only works if the hidden packages has no dependents.
+
 Currently there is no good solution to this situation. You can accept that the
 problem can occur since it's unlikely that this would hide any
 bugs. The other solution is to use `-XPackageImports` to qualify which
@@ -103,7 +105,7 @@ module Language.Nix.PrettyPrinting where
 import "pretty" Text.PrettyPrint.HughesPJClass
 ```
 
-For packages in stackage that also have non-doctest tests you can use a cabal flag to disable just doctests. You can send a pull request to stackage toggling this flag by editing the `package-flags` section of `build-constraints.yaml`.
+For packages that also have non-doctest tests you can use a cabal flag to disable just doctests.
 
 ```
 flag run-doctests

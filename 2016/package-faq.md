@@ -117,3 +117,10 @@ test-suite my-doctests
   if !flag(run-doctests)
     buildable: False
 ```
+
+## Using hlint in test suites
+
+If you intend to submit a package with a hlint test suite to stackage, please place that test suite under a disabled-by-default manual flag to prevent new versions of hlint from breaking the stackage build. If you want to get notified when new hlint releases add new warnings to your package you can set up a CI cron job instead.
+
+https://www.snoyman.com/blog/2017/11/future-proofing-test-suites
+
